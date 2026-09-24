@@ -18,7 +18,8 @@ if not api_key:
 # Configure the SDK
 genai.configure(api_key=api_key)
 
-# 3. Define the Agent Logic
+# 3. Define the Agent Logic with Caching to protect against 429 Rate Limits
+@st.cache_data(ttl=3600)  # Remembers results for 1 hour so it doesn't trigger Google's 5 RPM limit
 def process_ticket(ticket_text):
     system_instruction = (
         "You are an enterprise customer support triage backend. Analyze the incoming text "
@@ -30,7 +31,6 @@ def process_ticket(ticket_text):
         "Do not include any markdown block formatting like ```json, just return the raw text."
     )
     
-    # We use a fallback model definition setup to bypass strict SDK version variances
     try:
         model = genai.GenerativeModel(
             model_name="gemini-3.8-flash",
