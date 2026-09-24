@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 import json
+import time
 
 # 1. Page Configuration
 st.set_page_config(page_title="AI Lead & Support Routing Agent", page_icon="🤖", layout="centered")
@@ -18,8 +19,11 @@ if not api_key:
 # Configure the SDK
 genai.configure(api_key=api_key)
 
-# 3. Define the Agent Logic with Caching to protect against 429 Rate Limits
-@st.cache_data(ttl=3600)  # Remembers results for 1 hour so it doesn't trigger Google's 5 RPM limit
+# Initialize Session State to keep data frozen across arbitrary page updates
+if "analysis_result" not in st.session_state:
+    st.session_state.analysis_result = None
+
+# 3. Define the Agent Logic
 def process_ticket(ticket_text):
     system_instruction = (
         "You are an enterprise customer support triage backend. Analyze the incoming text "
@@ -45,37 +49,45 @@ def process_ticket(ticket_text):
         st.error(f"API Processing Error: {e}")
         return None
 
-# 4. Interactive Frontend User Interface
+# 4. Interactive Frontend User Interface wrapped in a strict Form container
 st.write("### Try it Out")
-user_input = st.text_area(
-    "Paste a sample customer email or potential business lead below:",
-    placeholder="Example: Hi, I love your product but our billing department got charged twice this month. Please fix ASAP or we will cancel our subscription. Thanks, Sarah from Enterprise Corp.",
-    height=150
-)
 
-if st.button("Process & Route Communication", type="primary"):
+with st.form("triage_form"):
+    user_input = st.text_area(
+        "Paste a sample customer email or potential business lead below:",
+        placeholder="Example: Hi, I love your product but our billing department got charged twice this month. Please fix ASAP or we will cancel our subscription. Thanks, Sarah from Enterprise Corp.",
+        height=150
+    )
+    submit_button = st.form_submit_button("Process & Route Communication", type="primary")
+
+if submit_button:
     if not user_input.strip():
         st.error("Please provide some text to analyze.")
     else:
         with st.spinner("Analyzing text, extracting metadata, and drafting response..."):
+            # Execute the API call safely inside the explicit button trigger event
             result = process_ticket(user_input)
-            
             if result:
-                st.success("Analysis Complete!")
-                
-                # Create visual blocks for extracted metrics
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.metric("🚨 Urgency", result.get("urgency", "N/A"))
-                with col2:
-                    st.metric("🎭 Sentiment", result.get("sentiment", "N/A"))
-                with col3:
-                    st.metric("📁 Target Department", result.get("category", "N/A"))
-                
-                # Display textual results
-                st.write("---")
-                st.subheader("📝 Executive Summary")
-                st.write(result.get("summary", ""))
-                
-                st.subheader("✉️ Automated Draft Response")
-                st.info(result.get("draft_reply", ""))
+                st.session_state.analysis_result = result
+
+# 5. Render outputs from frozen state storage
+if st.session_state.analysis_result:
+    result = st.session_state.analysis_result
+    st.success("Analysis Complete!")
+    
+    # Create visual blocks for extracted metrics
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("🚨 Urgency", result.get("urgency", "N/A"))
+    with col2:
+        st.metric("🎭 Sentiment", result.get("sentiment", "N/A"))
+    with col3:
+        st.metric("📁 Target Department", result.get("category", "N/A"))
+    
+    # Display textual results
+    st.write("---")
+    st.subheader("📝 Executive Summary")
+    st.write(result.get("summary", ""))
+    
+    st.subheader("✉️ Automated Draft Response")
+    st.info(result.get("draft_reply", ""))
