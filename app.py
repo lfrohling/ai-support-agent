@@ -9,7 +9,6 @@ st.title("🤖 AI Customer Support & Lead Routing Agent")
 st.caption("A portfolio project demonstrating structured LLM data extraction and automation.")
 
 # 2. Secure API Key Access
-# In production, Streamlit Secrets handles this securely.
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 
 if not api_key:
@@ -21,7 +20,6 @@ genai.configure(api_key=api_key)
 
 # 3. Define the Agent Logic
 def process_ticket(ticket_text):
-    # System instructions force the model to behave purely as a data-extraction backend
     system_instruction = (
         "You are an enterprise customer support triage backend. Analyze the incoming text "
         "and return a raw JSON object with these EXACT keys: "
@@ -32,39 +30,19 @@ def process_ticket(ticket_text):
         "Do not include any markdown block formatting like ```json, just return the raw text."
     )
     
+    # We use a fallback model definition setup to bypass strict SDK version variances
     try:
-       # Using gemini-3.8-flash via the standard client pattern
-try:
-    client = genai.Client()
-    response = client.interactions.create(
-        model="gemini-3.8-flash",
-        system_instruction=system_instruction,
-        input=f"Analyze this incoming communication:\n\n{ticket_text}",
-        generation_config={"response_mime_type": "application/json"}
-    )
-    # Parse output securely from the interactions format
-    return json.loads(response.output_text)
-except Exception as interaction_error:
-    # Fallback method just in case SDK versions mismatch
-    model = genai.GenerativeModel(
-        model_name="gemini-3.8-flash",
-        system_instruction=system_instruction
-    )
-    response = model.generate_content(
-        f"Analyze this incoming communication:\n\n{ticket_text}",
-        generation_config={"response_mime_type": "application/json"}
-    )
-    return json.loads(response.text)
-
+        model = genai.GenerativeModel(
+            model_name="gemini-3.8-flash",
+            system_instruction=system_instruction
+        )
         response = model.generate_content(
             f"Analyze this incoming communication:\n\n{ticket_text}",
             generation_config={"response_mime_type": "application/json"}
         )
-        
-        # Parse output securely
         return json.loads(response.text)
     except Exception as e:
-        st.error(f"API Error: {e}")
+        st.error(f"API Processing Error: {e}")
         return None
 
 # 4. Interactive Frontend User Interface
