@@ -33,12 +33,29 @@ def process_ticket(ticket_text):
     )
     
     try:
-        # Using gemini-2.5-flash as it is lightning fast and cost-effective
-        model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash",
-            system_instruction=system_instruction
-        )
-        
+       # Using gemini-3.8-flash via the standard client pattern
+try:
+    client = genai.Client()
+    response = client.interactions.create(
+        model="gemini-3.8-flash",
+        system_instruction=system_instruction,
+        input=f"Analyze this incoming communication:\n\n{ticket_text}",
+        generation_config={"response_mime_type": "application/json"}
+    )
+    # Parse output securely from the interactions format
+    return json.loads(response.output_text)
+except Exception as interaction_error:
+    # Fallback method just in case SDK versions mismatch
+    model = genai.GenerativeModel(
+        model_name="gemini-3.8-flash",
+        system_instruction=system_instruction
+    )
+    response = model.generate_content(
+        f"Analyze this incoming communication:\n\n{ticket_text}",
+        generation_config={"response_mime_type": "application/json"}
+    )
+    return json.loads(response.text)
+
         response = model.generate_content(
             f"Analyze this incoming communication:\n\n{ticket_text}",
             generation_config={"response_mime_type": "application/json"}
