@@ -17,7 +17,36 @@ Manual support ticket triage costs businesses millions in lost productivity and 
 * **Data Format:** Structured JSON Output
 
 ## ➡ Flow
-[ Incoming Email/Lead Text ] ──> [ Streamlit Web UI ] ──> [ Gemini API (Structured Output) ] ──> [ Metrics Dashboard & Response Draft ]
+
+```mermaid
+graph TD
+    %% Define Styles and Colors (Class names must not contain spaces)
+    classDef Input fill:#EBF5FB,stroke:#2E86C1,stroke-width:2px,color:#1B4F72,font-weight:bold;
+    classDef Framework fill:#F5EEF8,stroke:#8E44AD,stroke-width:2px,color:#4A235A,font-weight:bold;
+    classDef CoreAI fill:#FEF9E7,stroke:#D4AC0D,stroke-width:2px,color:#7D6608,font-weight:bold;
+    classDef Output fill:#EAFAF1,stroke:#27AE60,stroke-width:2px,color:#145A32,font-weight:bold;
+
+    %% Diagram Nodes
+    A[✉️ Incoming Ticket / Email Text]:::Input
+    B[📥 Streamlit Web UI Form]:::Framework
+    C[⚙️ System Instruction Prompt]:::Framework
+    D[🧠 Gemini 3.8 Flash API]:::CoreAI
+    E[📊 Dynamic UI Metrics Render]:::Output
+
+    %% Flow Connections
+    A -->|User Input Ingestion| B
+    B -->|Structured Form Submission| C
+    C -->|API Payload Request| D
+    D -->|Returns Parsed JSON Data| E
+
+    %% Subgraph detailing the JSON extraction metrics
+    subgraph Output Metrics Array
+        E --> Urgency[🚨 Urgency Tag]
+        E --> Sentiment[🎭 Sentiment Score]
+        E --> Category[📁 Target Department]
+        E --> Draft[✉️ Auto-Generated Reply]
+    end
+```
 
 <br>
 
