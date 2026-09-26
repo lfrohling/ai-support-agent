@@ -18,7 +18,9 @@ Manual support ticket triage costs businesses millions in lost productivity and 
 * **Language:** Python 3.12
 * **Data Format:** Structured JSON Output
 
-In case of large traffic activate the "simulated" toggle option.
+## In case of large traffic 
+Activate the "simulated" toggle option.
 
-To test this application .... give it something to work on... for example enter in a typical customer complaint to see how to algorithm handles the data... 
+## To test this application 
+Give it something to work on... for example enter in a typical customer complaint to see how to algorithm handles the data... 
 "Hi, I love your app but my billing department just noticed we were charged twice for our enterprise subscription this month. Please fix this immediately or we will have to cancel our contract. Thanks, Luke from Amazon."
