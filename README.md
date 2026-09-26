@@ -1,5 +1,3 @@
-# ai-support-agent
-
 # 🤖 AI-Powered Customer Support Triage & Lead Routing Agent : Website Edition
 
 A live, production-grade microservice designed to automate enterprise communication workflows. This tool analyzes incoming customer emails, reviews, or sales inquiries, extracts structured operational metadata, and auto-drafts highly contextualized executive responses in real-time.
@@ -18,9 +16,14 @@ Manual support ticket triage costs businesses millions in lost productivity and 
 * **Language:** Python 3.12
 * **Data Format:** Structured JSON Output
 
-## In case of large traffic 
+<br>
+
+## 🚦 Cache Option (for this demo)  
 Activate the "simulated" toggle option.
 
-## To test this application 
-Give it something to work on... for example enter in a typical customer complaint to see how to algorithm handles the data... 
-"Hi, I love your app but my billing department just noticed we were charged twice for our enterprise subscription this month. Please fix this immediately or we will have to cancel our contract. Thanks, Luke from Amazon."
+<br>
+
+## 🧪 Test Run
+* Give it something to work on. As an example:
+  
+*Hi, I love your app but my billing department just noticed we were charged twice for our enterprise subscription this month. Please fix this immediately or we will have to cancel our contract. Thanks, Luke from Amazon.*
