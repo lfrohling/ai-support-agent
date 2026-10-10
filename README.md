@@ -2,7 +2,6 @@
 
 A live, production-grade microservice designed to automate enterprise communication workflows. This tool analyzes incoming customer emails, reviews, or sales inquiries, extracts structured operational metadata, and auto-drafts highly contextualized executive responses in real-time.
 
-🌍 **Live Demo:** (https://luke-frohling-ai-support-agent.streamlit.app/)
 
 ## 💼 Business Value Case
 Manual support ticket triage costs businesses millions in lost productivity and slow customer response times. This solution addresses those structural bottlenecks by:
